@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			*{
+				margin: 0;
+				padding: 0;
+				text-decoration: none;
+			}
+			#box{
+				width: 100%;
+				height: 95%;
+				border: solid 1px red;
+				position: absolute;
+				margin: auto;
+				left: 0;
+				top: 5%;
+				right: 0;
+				bottom: 0;
+			}
+			#box div{
+				width: 200px;
+				border: solid 1px black;
+				text-align: center;
+				margin: 10px;
+				box-shadow: 0 0 10px black;
+				float: left;
+				/* position: absolute; */
+			}
+			
+			#box div p{
+				padding: 10px 5px;
+				display: block;
+				border-top: solid 1px black;
+			}
+			#box div span{
+				display: block;
+				width: 100%;
+				border-top: solid 1px black;
+				cursor: pointer;
+				font-size: 22px;
+				font-weight: 700;
+				color: red;
+			}
+			
+			.color{
+				background-color: blueviolet;
+				color: white;
+			}
+			
+		</style>
+	</head>
+	<body>
+		<textarea id="text"></textarea>
+		<input type="button" id="btn" value="提 交" />
+		<div id="box">
+		</div>
+		
+	</body>
+	<script src="js/jquery-3.3.1.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+	$("#btn").click(function(){
+		$.ajax({
+			type:"post",
+			url:"http://localhost:8080/add",
+			data:{
+				cont:$("#text").val()
+			},
+			success(res){
+				console.log(res)
+				show()
+			}
+		})
+		$("#text").val("")
+	})
+		show()
+		function show(){
+			$.ajax({
+				type:"get",
+				url:"http://localhost:8080/getdata",
+				success(res){
+					var str="";
+					for (var i = 0; i < res.length; i++) {
+						str+=`
+						<div>
+							<a href="####" onclick=del('${res[i]._id}')>删除</a>
+							<p>${res[i].cont}</p>
+						`
+							if(res[i].color==0){
+							str+=`
+							<span class='span' _id='${res[i]._id}'   >√</span>
+							</div>
+							`
+							}else{
+								str+=`
+								<span class='span color' _id='${res[i]._id}'   >√</span>
+								</div>
+								`
+							}
+						
+					}
+					$("#box").html(str)
+				}
+			})
+		}
+		
+		$("#box").on("click",".span",function(){
+			var id=$(this).attr("_id")
+			$.ajax({
+				type:"post",
+				url:"http://localhost:8080/colo",
+				data:{
+					id
+				},
+				success(res){
+					show()
+				}
+			})
+		})
+		
+		function del(id){
+			$.ajax({
+				type:"post",
+				url:"http://localhost:8080/del",
+				data:{
+					id
+				},
+				success(res){
+					show()
+				}
+			})
+		}
+	</script>
+	
+	
+	
+</html>
